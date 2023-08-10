@@ -117,9 +117,13 @@
                     <img src="eye_closed.png" alt="Toggle Confirm Password">
                 </span>
             </div>
-            <button type="submit" id="reset-button">Update My Password Now</button>
+            <button type="submit" id="reset-button">Update My Password Now!</button>
         </form>
     </div>
+
+
+
+
     <script>
         // Your existing script here
 
@@ -147,13 +151,10 @@
 
 
 
-
-
-
-        const resetButton = document.getElementById('reset-button');
-resetButton.addEventListener('click', async (event) => {
-    event.preventDefault(); // Prevent form submission and page refresh
-
+        const resetForm = document.getElementById('reset-form');
+resetForm.addEventListener('submit', async (event) => {
+    event.preventDefault();  // Prevent the default form submission behavior
+    
     const newPassword = document.getElementById('new-password').value;
     const confirmPassword = document.getElementById('confirm-password').value;
 
