@@ -117,7 +117,7 @@
                     <img src="eye_closed.png" alt="Toggle Confirm Password">
                 </span>
             </div>
-            <button type="submit" id="reset-button">Update My Password Now!</button>
+            <button type="submit" id="reset-button">Update My Password Now</button>
         </form>
     </div>
     <script>
@@ -150,8 +150,10 @@
 
 
 
-      const resetButton = document.getElementById('reset-button');
-resetButton.addEventListener('click', async () => {
+        const resetButton = document.getElementById('reset-button');
+resetButton.addEventListener('click', async (event) => {
+    event.preventDefault(); // Prevent form submission and page refresh
+
     const newPassword = document.getElementById('new-password').value;
     const confirmPassword = document.getElementById('confirm-password').value;
 
@@ -190,6 +192,7 @@ resetButton.addEventListener('click', async () => {
         alert('Passwords do not match.');
     }
 });
+
 
 
     </script>
