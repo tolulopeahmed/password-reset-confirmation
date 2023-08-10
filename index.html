@@ -162,7 +162,7 @@ resetForm.addEventListener('submit', async (event) => {
         const token = new URLSearchParams(window.location.search).get('token');
         if (token) {
             try {
-                const response = await fetch(`http://127.0.0.1:8000/reset-password/?token=${token}`, {
+                const response = await fetch(`http://127.0.0.1:8000/api/reset-password/?token=${token}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
