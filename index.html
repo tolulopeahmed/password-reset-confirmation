@@ -117,7 +117,7 @@
                     <img src="eye_closed.png" alt="Toggle Confirm Password">
                 </span>
             </div>
-            <button type="submit" id="reset-button">Update My Password</button>
+            <button type="submit" id="reset-button">Update My Password Now!</button>
         </form>
     </div>
     <script>
@@ -142,35 +142,47 @@
         togglePassword('new-password', 'toggle-new-password');
         togglePassword('confirm-password', 'toggle-confirm-password');
 
-        const resetButton = document.getElementById('reset-button');
-resetButton.addEventListener('click', () => {
+
+
+
+
+
+
+
+
+      const resetButton = document.getElementById('reset-button');
+resetButton.addEventListener('click', async () => {
     const newPassword = document.getElementById('new-password').value;
     const confirmPassword = document.getElementById('confirm-password').value;
+
     if (newPassword === confirmPassword) {
         const token = new URLSearchParams(window.location.search).get('token');
         if (token) {
-            // Make an API call to your backend /reset-password/ endpoint
-            fetch(`/api/reset-password/?token=${token}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ password: newPassword, confirm_password: confirmPassword })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message) {
-                    alert('Password reset successful. Return to the MyFund App to login with your new password.');
-                    // You can also redirect the user to the login page here if needed
-                } else if (data.error) {
-                    alert(data.error);
+            try {
+                const response = await fetch(`/api/reset-password/?token=${token}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ password: newPassword, confirm_password: confirmPassword })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.message) {
+                        alert('Password reset successful. Return to the MyFund App to login with your new password.');
+                        // You can also redirect the user to the login page here if needed
+                    } else if (data.error) {
+                        alert(data.error);
+                    } else {
+                        alert('Password reset failed.');
+                    }
                 } else {
-                    alert('Password reset failed.');
+                    throw new Error('Network response was not ok.');
                 }
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error('Error:', error);
-            });
+            }
         } else {
             alert('Invalid token.');
         }
@@ -178,6 +190,7 @@ resetButton.addEventListener('click', () => {
         alert('Passwords do not match.');
     }
 });
+
 
     </script>
 </body>
