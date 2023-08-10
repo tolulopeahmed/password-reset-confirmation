@@ -13,11 +13,6 @@
             margin: 0;
         }
 
-        .logo {
-        width: 750px; /* Increase this value to make the logo larger */
-        height: auto;
-        margin-bottom: 20px;
-    }
         .container {
             background-color: #FFFFFF;
             padding: 30px;
@@ -27,6 +22,7 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+
         .header {
             font-family: 'Proxima-Nova', sans-serif;
             font-size: 30px;
@@ -34,20 +30,24 @@
             margin-bottom: 10px;
             color: #4C28BC;
         }
+
         .subText {
             font-size: 16px;
             color: black;
             text-align: center;
             margin: 0 20px;
         }
+
         .logo {
             width: 100px;
             height: auto;
             margin-bottom: 20px;
         }
+
         #reset-form {
             margin-top: 20px;
         }
+
         input {
             width: 100%;
             padding: 10px;
@@ -55,6 +55,33 @@
             border: 1px solid #ccc;
             border-radius: 5px;
         }
+
+        .password-toggle {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-toggle input[type="password"] {
+            width: calc(100% - 30px);
+            padding-right: 30px;
+        }
+
+        .password-toggle .toggle-icon {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        .password-toggle .toggle-icon img {
+            width: 25px;
+            height: auto;
+            margin-left: -50px;
+
+        }
+
         #reset-button {
             background-color: #4C28BC;
             color: white;
@@ -64,6 +91,7 @@
             cursor: pointer;
             font-weight: bold;
         }
+
         #reset-button:hover {
             background-color: #331D99;
         }
@@ -75,48 +103,82 @@
     <div class="container">
         <img src="icon.png" alt="MyFund Logo" class="logo">
         <h2 class="header">Reset Password</h2>
-        <p class="subText">Enter your new password below and confirm it to reset your password.</p>
+        <p class="subText">Enter your new password below and confirm it to reset your MyFund password.</p>
         <form id="reset-form">
-            <input type="password" id="new-password" placeholder="New Password" required><br>
-            <input type="password" id="confirm-password" placeholder="Confirm Password" required><br>
+            <div class="password-toggle">
+                <input type="password" id="new-password" placeholder="New Password" required>
+                <span class="toggle-icon" id="toggle-new-password">
+                    <img src="eye_closed.png" alt="Toggle New Password">
+                </span>
+            </div>
+            <div class="password-toggle">
+                <input type="password" id="confirm-password" placeholder="Confirm Password" required>
+                <span class="toggle-icon" id="toggle-confirm-password">
+                    <img src="eye_closed.png" alt="Toggle Confirm Password">
+                </span>
+            </div>
             <button type="button" id="reset-button">Reset Password</button>
         </form>
     </div>
     <script>
-        const resetButton = document.getElementById('reset-button');
-        resetButton.addEventListener('click', () => {
-            const newPassword = document.getElementById('new-password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
-            if (newPassword === confirmPassword) {
-                const token = new URLSearchParams(window.location.search).get('token');
-                if (token) {
-                    // Make an API call to your backend /reset-password/ endpoint
-                    fetch(`/api/reset-password/?token=${token}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ password: newPassword, confirm_password: confirmPassword })
-                    })
-                    .then(response => {
-                        if (response.ok) {
-                            alert('Password reset successful.');
-                            // Redirect the user to the login page or a success page
-                            // window.location.href = '/login/';
-                        } else {
-                            alert('Password reset failed.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
+        // Your existing script here
+
+        // Toggle password visibility for new password
+        const togglePassword = (inputId, toggleIconId) => {
+            const input = document.getElementById(inputId);
+            const toggleIcon = document.getElementById(toggleIconId);
+
+            toggleIcon.addEventListener('click', () => {
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    toggleIcon.innerHTML = '<img src="eye_open.png" alt="Toggle Password">';
                 } else {
-                    alert('Invalid token.');
+                    input.type = 'password';
+                    toggleIcon.innerHTML = '<img src="eye_closed.png" alt="Toggle Password">';
                 }
-            } else {
-                alert('Passwords do not match.');
-            }
-        });
+            });
+        };
+
+        togglePassword('new-password', 'toggle-new-password');
+        togglePassword('confirm-password', 'toggle-confirm-password');
+
+        const resetButton = document.getElementById('reset-button');
+resetButton.addEventListener('click', () => {
+    const newPassword = document.getElementById('new-password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+    if (newPassword === confirmPassword) {
+        const token = new URLSearchParams(window.location.search).get('token');
+        if (token) {
+            // Make an API call to your backend /reset-password/ endpoint
+            fetch(`/api/reset-password/?token=${token}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ password: newPassword, confirm_password: confirmPassword })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert('Password reset successful. Return to the MyFund App to login with your new password.');
+                    // You can also redirect the user to the login page here if needed
+                } else if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert('Password reset failed.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        } else {
+            alert('Invalid token.');
+        }
+    } else {
+        alert('Passwords do not match.');
+    }
+});
+
     </script>
 </body>
 </html>
