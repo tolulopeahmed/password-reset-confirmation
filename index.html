@@ -3,7 +3,98 @@
 <head>
     <title>Reset Password</title>
     <style>
-        /* Your CSS styles here */
+        body {
+            font-family: 'Product Sans', sans-serif;
+            background-color: #DCD1FF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #FFFFFF;
+            padding: 30px;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            font-family: 'Proxima-Nova', sans-serif;
+            font-size: 30px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            color: #4C28BC;
+        }
+
+        .subText {
+            font-size: 16px;
+            color: black;
+            text-align: center;
+            margin: 0 20px;
+        }
+
+        .logo {
+            width: 100px;
+            height: auto;
+            margin-bottom: 2px;
+        }
+
+        #reset-form {
+            margin-top: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .password-toggle {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-toggle input[type="password"] {
+            width: calc(100% - 30px);
+            padding-right: 30px;
+        }
+
+        .password-toggle .toggle-icon {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        .password-toggle .toggle-icon img {
+            width: 25px;
+            height: auto;
+            margin-left: -50px;
+
+        }
+
+        #reset-button {
+            background-color: #4C28BC;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #reset-button:hover {
+            background-color: #331D99;
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Proxima+Nova:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Product+Sans:wght@400;700&display=swap" rel="stylesheet">
@@ -26,69 +117,62 @@
                     <img src="eye_closed.png" alt="Toggle Confirm Password">
                 </span>
             </div>
-            <button type="submit" id="reset-button">Update Password Now!</button>
+            <button type="submit" id="reset-button">Update My Password Now!</button>
         </form>
     </div>
 
-    <script>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js">
+            // Toggle password visibility function (unchanged)
         const togglePassword = (inputId, toggleIconId) => {
-            // ... (unchanged)
+            // ...
         };
-    
+
         togglePassword('new-password', 'toggle-new-password');
         togglePassword('confirm-password', 'toggle-confirm-password');
-    
-        // Extract token from URL parameters
-        const urlSearchParams = new URLSearchParams(window.location.search);
-        const token = urlSearchParams.get('token');
-        console.log('Token:', token);
 
-        if (!token) {
-            alert('Token not found in URL.');
-        }
-    
+        // Form submission with Axios
         const resetForm = document.getElementById('reset-form');
         resetForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-    
+
             const newPassword = document.getElementById('new-password').value;
             const confirmPassword = document.getElementById('confirm-password').value;
-    
-            if (newPassword === confirmPassword && token) {
-                try {
-                    const response = await fetch(`http://192.168.84.34:8000/api/reset-password/?token=${token}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ password: newPassword, confirm_password: confirmPassword }),
-                    });
-    
-                    console.log('Response status:', response.status);
-                    
-                    if (response.ok) {
-                        const data = await response.json();
-                        console.log('Response data:', data);
-    
-                        if (data.message) {
-                            alert('Password reset successful. Return to the MyFund App to login with your new password.');
-                            // You can also redirect the user to the login page here if needed
-                        } else if (data.error) {
-                            alert(data.error);
+
+            if (newPassword === confirmPassword) {
+                const token = new URLSearchParams(window.location.search).get('token');
+                if (token) {
+                    try {
+                        const response = await axios.post(`http://192.168.84.34:8000/api/reset-password/?token=${token}`, {
+                            password: newPassword,
+                            confirm_password: confirmPassword
+                        });
+
+                        if (response.status === 200) {
+                            const data = response.data;
+                            if (data.message) {
+                                alert('Password reset successful. Return to the MyFund App to login with your new password.');
+                                // You can also redirect the user to the login page here if needed
+                            } else if (data.error) {
+                                alert(data.error);
+                            } else {
+                                alert('Password reset failed.');
+                            }
                         } else {
-                            alert('Password reset failed.');
+                            throw new Error('Network response was not ok.');
                         }
-                    } else {
-                        throw new Error('Network response was not ok.');
+                    } catch (error) {
+                        console.error('Error:', error);
                     }
-                } catch (error) {
-                    console.error('Error:', error);
+                } else {
+                    alert('Invalid token.');
                 }
             } else {
-                alert('Passwords do not match or token is missing.');
+                alert('Passwords do not match.');
             }
         });
     </script>
-  
 </body>
 </html>
