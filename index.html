@@ -95,6 +95,15 @@
         #reset-button:hover {
             background-color: #331D99;
         }
+
+        /* Responsive styles */
+        @media (max-width: 600px) {
+            .container {
+                width: 100%;
+                max-width: none;
+                padding: 20px;
+            }
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Proxima+Nova:wght@400;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Product+Sans:wght@400;700&display=swap" rel="stylesheet">
@@ -117,11 +126,9 @@
                     <img src="eye_closed.png" alt="Toggle Confirm Password">
                 </span>
             </div>
-            <button type="submit" id="reset-button">Update Password Now!</button>
+            <button type="submit" id="reset-button">Update My Password Now!</button>
         </form>
     </div>
-
-
 
     <script>
         const togglePassword = (inputId, toggleIconId) => {
