@@ -13,6 +13,34 @@
             margin: 0;
         }
 
+        #reset-button {
+    background-color: #4C28BC;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease-in-out; /* Add a transition effect */
+
+    /* Add a new property for disabled state */
+    opacity: 1;
+}
+
+#reset-button:disabled {
+    background-color: #ccc; /* Change the background color for disabled state */
+    cursor: not-allowed; /* Change cursor to indicate not-allowed */
+    opacity: 0.7; /* Reduce opacity for disabled state */
+}
+        #reset-button.success {
+            background-color: green;
+        }
+        .toggle-icon.active img {
+            display: none; /* Hide the closed eye icon */
+        }
+        #reset-button.error {
+            background-color: red;
+        }
         .container {
             background-color: #FFFFFF;
             padding: 30px;
@@ -175,9 +203,13 @@
     
                         if (data.message) {
                             alert('Password reset successful. Return to the MyFund App to login with your new password.');
-                            // You can also redirect the user to the login page here if needed
+                            resetButton.classList.remove('default'); // Remove the default class
+                            resetButton.classList.add('success'); // Add the success class
+                           // You can also redirect the user to the login page here if needed
                         } else if (data.error) {
                             alert('Error: ' + data.error); // Display the error message
+                            resetButton.classList.remove('default'); // Remove the default class
+                            resetButton.classList.add('error'); // Add the error class
                         } else {
                             alert('Password reset failed.');
                         }
@@ -187,6 +219,8 @@
                 } catch (error) {
                     console.error('Error:', error);
                     alert('An error occurred during password reset. Please try again later.');
+                    resetButton.classList.remove('default'); // Remove the default class
+                    resetButton.classList.add('error'); // Add the error class
                 } finally {
                     resetButton.disabled = false; // Re-enable the button after request completes
                 }
